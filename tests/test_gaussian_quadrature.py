@@ -6,7 +6,7 @@ from utils import almost_equals
 
 def read_data(fname):
     with open(fname) as f:
-        lines = [[float(num) for num in line[:-1].split("\t")] for line in f.readlines()]
+        lines = [[float(num) for num in line[:-1].split("\t")] for line in f.readlines()[1:]]
         lines = sorted(lines, key=lambda line: line[2])
         data = {"x": [], "w": []}
         for i, wi, xi in lines:
