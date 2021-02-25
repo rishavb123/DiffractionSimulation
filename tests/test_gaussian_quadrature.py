@@ -31,7 +31,7 @@ def test_data():
     }
 
 
-def test_samples(test_data):
+def test_guassian_quadrature_samples(test_data):
     for N in test_data:
         G = GuassianQuadrature(N)
         for xt, x in zip(G.x, test_data[N]["x"]):
