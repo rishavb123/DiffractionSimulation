@@ -17,13 +17,13 @@ def one_hot(n, l=0) -> np.array:
     arr[n] = 1
     return arr
 
-def almost_equals(a, b, eps=1e-5) -> bool:
+def almost_equals(a, b, eps=1e-10) -> bool:
     """Checks if two values are close up to a difference of eps
 
     Args:
         a (float): The first value
         b (float): The second value
-        eps (float, optional): The maximum allowed difference between a and b. Defaults to 1e-5.
+        eps (float, optional): The maximum allowed difference between a and b. Defaults to 1e-10.
 
     Returns:
         bool: Whether or not the two values have a difference greater than epsilon
