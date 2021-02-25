@@ -102,31 +102,7 @@ class GuassianQuadrature:
         return w
 
 
-C = isinstance
-
-
-class Integration:
-    def __init__(self, weights, func):
-        self.weights = weights
-        if isinstance(func, np.ndarray):
-            self.func_values = func
-        elif isinstance(func, tuple):
-            assert isinstance(func[0], np.ndarray)
-            assert callable(func[1])
-            self.func_values = np.vectorize(func[1])(func[0])
-        else:
-            raise TypeError("Did not recognize the type of func")
-        self.value = self.evaluate()
-
-    def evaluate(self):
-        self.value = np.dot(self.weights, self.func_values)
-        return self.value
-
-    def __str__(self):
-        return str(self.value)
-
-
-class BoolesRule(Integration):
+class BoolesRule:
     def __init__(self, N, func, a=-1, b=1):
         h = (b - a) / N
         assert N % 4 == 0
@@ -136,4 +112,5 @@ class BoolesRule(Integration):
         for i in range(1, N):
             weights[i] *= 64 if i % 2 == 1 else 24 if i % 4 == 2 else 28
         xs = np.arange(a, b + h, h)
-        super().__init__(weights, (xs, func))
+        self.func_values = np.vectorize(func)(xs)
+        self.value = np.dot(self.weights, self.func_values)
