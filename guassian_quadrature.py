@@ -5,7 +5,6 @@ from numpy.polynomial.legendre import legder, legval
 
 from utils import one_hot
 
-
 class GuassianQuadrature:
     """The guassian quadrature class encapsulating all the methods"""
 
@@ -71,21 +70,48 @@ class GuassianQuadrature:
         return w
 
     def __integration(self):
-        # TODO: come back to the integration method after finishing trapezoind and simpsons rule
-        # need to build out trapezoid and simpsons rule in a seperate integration file to finish this function
-        return self.__matrix_algebra()
+        def phi(k):
+            def f(x):
+                temp = np.copy(self.x)
+                t = temp[k]
+                temp = np.delete(temp, k)
+                arr = (x - temp) / (t - temp)
+                return np.prod(arr)
+
+            return f
+
+        w = np.array([BoolesRule(1000, phi(k)).value for k in range(self.N)])
+        return w
 
     def __closed_form(self):
         coefficients = one_hot(self.N, self.N + 1)
-        w = [
-            2
-            / (1 - xk * xk)
-            * (
-                np.polynomial.legendre.legval(
-                    xk, np.polynomial.legendre.legder(coefficients)
+        w = np.array(
+            [
+                2
+                / (1 - xk * xk)
+                * (
+                    np.polynomial.legendre.legval(
+                        xk, np.polynomial.legendre.legder(coefficients)
+                    )
                 )
-            )
-            ** -2
-            for xk in self.x
-        ]
+                ** -2
+                for xk in self.x
+            ]
+        )
         return w
+
+C=isinstance
+class Integration:
+	def __init__(self,weights,func):
+		self.weights=weights
+		if isinstance(func,np.ndarray):self.func_values=func
+		elif isinstance(func,tuple):assert isinstance(func[0],np.ndarray);assert callable(func[1]);self.func_values=np.vectorize(func[1])(func[0])
+		else:raise TypeError('Did not recognize the type of func')
+		self.value=self.evaluate()
+	def evaluate(self):self.value=np.dot(self.weights,self.func_values);return self.value
+	def __str__(self):return str(self.value)
+class BoolesRule(Integration):
+	def __init__(self,N,func,a=-1,b=1):
+		h=(b-a)/N;assert N%4==0;weights=np.ones(N+1)*h/45;weights[0]*=14;weights[-1]*=14
+		for i in range(1,N):weights[i]*=64 if i%2==1 else 24 if i%4==2 else 28
+		xs=np.arange(a,b+h,h);super().__init__(weights,(xs,func))

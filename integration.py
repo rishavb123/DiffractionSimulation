@@ -28,8 +28,8 @@ class Integration:
 
 
 class GuassianQuadratureIntegration(Integration):
-    def __init__(self, N, func, a=-1, b=1) -> None:
-        self.G = GuassianQuadrature(N)
+    def __init__(self, N, func, a=-1, b=1, method="closed form") -> None:
+        self.G = GuassianQuadrature(N, method=method)
         mid = (a + b) / 2
         dist = (b - a) / 2
         self.func = np.vectorize(lambda x: dist * func(dist * x + mid))
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     b = 2
     f = lambda x: x * x
     integrals = [
-        GuassianQuadratureIntegration(N, f, a=a, b=b).value,
+        GuassianQuadratureIntegration(N, f, a=a, b=b, method="closed form").value,
         TrapezoidRule(N, f, a=a, b=b).value,
         SimpsonsRule(N, f, a=a, b=b).value,
         Simpsons38Rule(N, f, a=a, b=b).value,
