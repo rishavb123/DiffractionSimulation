@@ -69,6 +69,7 @@ class Simpsons38Rule(Integration):
         xs = np.arange(a, b + h, h)
         super().__init__(weights, (xs, func))
 
+
 class BoolesRule(Integration):
     def __init__(self, N, func, a=-1, b=1) -> None:
         h = (b - a) / N
@@ -82,7 +83,6 @@ class BoolesRule(Integration):
         super().__init__(weights, (xs, func))
 
 
-
 if __name__ == "__main__":
     N = 600
     a = -6
@@ -93,6 +93,6 @@ if __name__ == "__main__":
         TrapezoidRule(N, f, a=a, b=b).value,
         SimpsonsRule(N, f, a=a, b=b).value,
         Simpsons38Rule(N, f, a=a, b=b).value,
-        BoolesRule(N, f, a=a, b=b).value
+        BoolesRule(N, f, a=a, b=b).value,
     ]
     print(integrals)
