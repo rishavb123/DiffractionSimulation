@@ -23,7 +23,7 @@ def almost_equals(a, b, eps=1e-5) -> bool:
     Args:
         a (float): The first value
         b (float): The second value
-        eps (float, optional): The maximum allowed difference between a and b. Defaults to 0.00001.
+        eps (float, optional): The maximum allowed difference between a and b. Defaults to 1e-5.
 
     Returns:
         bool: Whether or not the two values have a difference greater than epsilon
