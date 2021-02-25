@@ -6,7 +6,9 @@ from utils import almost_equals
 
 def read_data(fname):
     with open(fname) as f:
-        lines = [[float(num) for num in line[:-1].split("\t")] for line in f.readlines()[1:]]
+        lines = [
+            [float(num) for num in line[:-1].split("\t")] for line in f.readlines()[1:]
+        ]
         lines = sorted(lines, key=lambda line: line[2])
         data = {"x": [], "w": []}
         for i, wi, xi in lines:
@@ -36,3 +38,19 @@ def test_guassian_quadrature_samples(test_data):
         G = GuassianQuadrature(N)
         for xt, x in zip(G.x, test_data[N]["x"]):
             assert almost_equals(xt, x)
+
+
+def test_guassian_quadrature_closed_form_weights(test_data):
+    for N in test_data:
+        G = GuassianQuadrature(N)
+        for wt, w in zip(G.w, test_data[N]["w"]):
+            assert almost_equals(wt, w)
+
+
+def test_guassian_quadrature_matrix_algebra_weights(test_data):
+    for N in test_data:
+        if N  >= 50:
+            continue # Only works up to N = 40
+        G = GuassianQuadrature(N, method="matrix algebra")
+        for wt, w in zip(G.w, test_data[N]["w"]):
+            assert almost_equals(wt, w, eps=1e-2)

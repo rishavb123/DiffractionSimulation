@@ -14,7 +14,7 @@ class GuassianQuadrature:
 
         Args:
             N (int): The number of sample points to use
-            method (str, optional): The method used to calculate the weights. Could be matrix algebra, integration, or closed form. Defaults to "closed form".
+            method (str, optional): The method used to calculate the weights. Could be matrix algebra, integration, or closed form. Defaults to "closed form". Note that only the closed form solution will work for larger N.
 
         Raises:
             ValueError: The value of method was not matrix algebra, integration, or closed form.
@@ -78,7 +78,7 @@ class GuassianQuadrature:
     def __closed_form(self):
         coefficients = one_hot(self.N, self.N + 1)
         w = [
-            1
+            2
             / (1 - xk * xk)
             * (
                 np.polynomial.legendre.legval(
