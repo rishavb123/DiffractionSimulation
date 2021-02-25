@@ -26,7 +26,7 @@ class GuassianQuadrature:
             )
         self.method = method
         self.choose_samples()
-        self.calcualte_weights()
+        self.calculate_weights()
 
     def choose_samples(self):
         """Chooses N samples between -1 and 1 by calculating the roots of a legendre polynomial of degree N.
@@ -82,7 +82,7 @@ class GuassianQuadrature:
             / (1 - xk * xk)
             * (
                 np.polynomial.legendre.legval(
-                    xk, np.polynomial.legrendre.legder(coefficients)
+                    xk, np.polynomial.legendre.legder(coefficients)
                 )
             )
             ** -2
