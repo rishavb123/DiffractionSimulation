@@ -1,6 +1,6 @@
 import pytest
 
-from guassian_quadrature import GuassianQuadrature
+from gaussian_quadrature import GaussianQuadrature
 from utils import almost_equals
 
 
@@ -25,32 +25,32 @@ def test_data():
             "x": [-0.7745966692414834, 0, 0.7745966692414834],
             "w": [5 / 9, 8 / 9, 5 / 9],
         },
-        10: read_data("./tests/data/guassian_quadrature/10.tsv"),
-        23: read_data("./tests/data/guassian_quadrature/23.tsv"),
-        40: read_data("./tests/data/guassian_quadrature/40.tsv"),
-        50: read_data("./tests/data/guassian_quadrature/50.tsv"),
-        64: read_data("./tests/data/guassian_quadrature/64.tsv"),
+        10: read_data("./tests/data/gaussian_quadrature/10.tsv"),
+        23: read_data("./tests/data/gaussian_quadrature/23.tsv"),
+        40: read_data("./tests/data/gaussian_quadrature/40.tsv"),
+        50: read_data("./tests/data/gaussian_quadrature/50.tsv"),
+        64: read_data("./tests/data/gaussian_quadrature/64.tsv"),
     }
 
 
-def test_guassian_quadrature_samples(test_data):
+def test_gaussian_quadrature_samples(test_data):
     for N in test_data:
-        G = GuassianQuadrature(N)
+        G = GaussianQuadrature(N)
         for xt, x in zip(G.x, test_data[N]["x"]):
             assert almost_equals(xt, x)
 
 
-def test_guassian_quadrature_closed_form_weights(test_data):
+def test_gaussian_quadrature_closed_form_weights(test_data):
     for N in test_data:
-        G = GuassianQuadrature(N)
+        G = GaussianQuadrature(N)
         for wt, w in zip(G.w, test_data[N]["w"]):
             assert almost_equals(wt, w)
 
 
-def test_guassian_quadrature_matrix_algebra_weights(test_data):
+def test_gaussian_quadrature_matrix_algebra_weights(test_data):
     for N in test_data:
         if N  >= 50:
             continue # Only works up to N = 40
-        G = GuassianQuadrature(N, method="matrix algebra")
+        G = GaussianQuadrature(N, method="matrix algebra")
         for wt, w in zip(G.w, test_data[N]["w"]):
             assert almost_equals(wt, w, eps=1e-2)

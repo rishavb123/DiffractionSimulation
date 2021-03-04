@@ -1,4 +1,4 @@
-"""A file for choosing the points of the Guassian Quadrature and calculating the weights"""
+"""A file for choosing the points of the Gaussian Quadrature and calculating the weights"""
 import numpy as np
 from numpy.lib import polynomial
 from numpy.polynomial.legendre import legder, legval
@@ -6,11 +6,11 @@ from numpy.polynomial.legendre import legder, legval
 from utils import one_hot
 
 
-class GuassianQuadrature:
-    """The guassian quadrature class encapsulating all the methods"""
+class GaussianQuadrature:
+    """The gaussian quadrature class encapsulating all the methods"""
 
     def __init__(self, N, method="closed form") -> None:
-        """Creates an object of the Guassian Quadrature class and calculates the samples and weights
+        """Creates an object of the Gaussian Quadrature class and calculates the samples and weights
 
         Args:
             N (int): The number of sample points to use
