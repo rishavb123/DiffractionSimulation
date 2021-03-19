@@ -1,7 +1,5 @@
 """A file for choosing the points of the Gaussian Quadrature and calculating the weights"""
 import numpy as np
-from numpy.lib import polynomial
-from numpy.polynomial.legendre import legder, legval
 
 from utils import one_hot
 
