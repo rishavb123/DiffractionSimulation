@@ -122,3 +122,13 @@ if __name__ == "__main__":
     f = lambda x, y: x*x + y*y
     integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
     print(integral)
+    print("------------- 2D Integration of x^2*y^2 --------------------")
+    N = 600
+    f = lambda x, y: x*x * y*y
+    integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
+    print(integral)
+    print("------------- 2D Integration of y*cos(pi*xy) --------------------")
+    N = 600
+    f = lambda x, y: y*np.cos(np.pi*x*y)
+    integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
+    print(integral)
