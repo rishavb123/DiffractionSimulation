@@ -1,5 +1,4 @@
 """A file for all the integration methods"""
-# TODO: comment this file
 import numpy as np
 
 from gaussian_quadrature import GaussianQuadrature
@@ -42,6 +41,35 @@ class Integration2D(Integration):
                 func_values.append(func(x, y))
         self.func_values = np.array(func_values)
         super().__init__(self.weights, self.func_values)
+
+class IntegrationMD(Integration):
+    def __init__(self, M, method, N, func, a=-1, b=1) -> None:
+        grid, weightsMD = create_M_dimensional_weights(M, method, N, a, b)
+        self.weights = np.reshape(weightsMD, weightsMD.size)
+        if type(func) == np.ndarray:
+            self.func_values = np.reshape(func, func.size)
+        else:
+            func_values_md = np.zeros([N + 1 for _ in range(M)])
+            for idx, _ in np.ndenumerate(func_values_md):
+                func_values_md[idx] = func(grid[idx])
+            self.func_values = np.reshape(func_values_md, func_values_md.size)
+        super().__init__(self.weights, self.func_values)
+
+def create_M_dimensional_weights(M, method, N, a, b):
+    shape = [N + 1 for _ in range(M)]
+    get_a = lambda i: a[i] if hasattr(a, '__iter__') else a
+    get_b = lambda i: b[i] if hasattr(b, '__iter__') else b
+    get_method = lambda i: method[i] if hasattr(method, '__iter__') else method
+    individual_integrals = [get_method(i)(N, None, a=get_a(i), b=get_b(i)) for i in range(M)]
+    weights = 1
+    for i in range(M - 1, -1, -1):
+        weights = np.outer(individual_integrals[i].weights, weights).reshape(shape[i:])
+    inputs = np.array([integral.xs for integral in individual_integrals])
+    grid = np.ones(shape + [M])
+    for idx, value in np.ndenumerate(inputs):
+        m, k = idx
+        grid[(slice(None),) * m + (k,) + (slice(None),) * (M - m - 1) + (m,)] = value
+    return grid, weights
 
 class GaussianQuadratureIntegration(Integration):
     def __init__(self, N, func, a=-1, b=1, method="closed form") -> None:
@@ -102,33 +130,48 @@ class BoolesRule(Integration):
         self.xs = np.arange(a, b + h, h)
         super().__init__(weights, (self.xs, func))
 
-
 if __name__ == "__main__":
-    print("------------- Integration of x^2 --------------------")
-    N = 600
-    a = -6
-    b = 2
-    f = lambda x: x * x
-    integrals = [
-        GaussianQuadratureIntegration(N, f, a=a, b=b, method="closed form").value,
-        TrapezoidRule(N, f, a=a, b=b).value,
-        SimpsonsRule(N, f, a=a, b=b).value,
-        Simpsons38Rule(N, f, a=a, b=b).value,
-        BoolesRule(N, f, a=a, b=b).value,
-    ]
-    print(integrals)
-    print("------------- 2D Integration of x^2 + y^2 --------------------")
-    N = 600
-    f = lambda x, y: x*x + y*y
-    integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
-    print(integral)
-    print("------------- 2D Integration of x^2*y^2 --------------------")
-    N = 600
-    f = lambda x, y: x*x * y*y
-    integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
-    print(integral)
-    print("------------- 2D Integration of y*cos(pi*xy) --------------------")
-    N = 600
-    f = lambda x, y: y*np.cos(np.pi*x*y)
-    integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
-    print(integral)
+    # print("------------- Integration of x^2 --------------------")
+    # N = 600
+    # a = -6
+    # b = 2
+    # f = lambda x: x * x
+    # integrals = [
+    #     GaussianQuadratureIntegration(N, f, a=a, b=b, method="closed form").value,
+    #     TrapezoidRule(N, f, a=a, b=b).value,
+    #     SimpsonsRule(N, f, a=a, b=b).value,
+    #     Simpsons38Rule(N, f, a=a, b=b).value,
+    #     BoolesRule(N, f, a=a, b=b).value,
+    # ]
+    # print(integrals)
+    # print("------------- 2D Integration of x^2 + y^2 --------------------")
+    # N = 600
+    # f = lambda x, y: x*x + y*y
+    # integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
+    # print(integral)
+    # print("------------- 2D Integration of x^2*y^2 --------------------")
+    # N = 600
+    # f = lambda x, y: x*x * y*y
+    # integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
+    # print(integral)
+    # print("------------- 2D Integration of y*cos(pi*xy) --------------------")
+    # N = 600
+    # f = lambda x, y: y*np.cos(np.pi*x*y)
+    # integral = Integration2D(GaussianQuadratureIntegration, BoolesRule, N, f) # going over (-1, 1) in x and y
+    # print(integral)
+    # print("------------- 1D Integration of -2cos(y)/y --------------------")
+    # N = 600
+    # # f = lambda y: -2 * np.cos(y) / y
+    # f = lambda x: np.exp(1j*x)
+    # integral = GaussianQuadratureIntegration(N, f)
+    # print(integral)
+    # print("------------- 2D Integration of exp(ixy) --------------------")
+    # N = 600
+    # f = lambda x, y: np.exp(1j * x * y)
+    # integral = Integration2D(GaussianQuadratureIntegration, GaussianQuadratureIntegration, N, f) # going over (-1, 1) in x and y
+    # print(integral)
+    print("-------------- ND Integration ------------------------------")
+    f = lambda xs: np.sum(np.array(xs) ** 2)
+    N = 52
+    integral = IntegrationMD(4, BoolesRule, N, f)
+    print(integral) # should be 21.33333333333
